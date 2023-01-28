@@ -8,22 +8,45 @@ X = "X"
 O = "O"
 EMPTY = None
 
+board_state = [
+    [EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY],
+    [EMPTY, EMPTY, EMPTY]
+]
+
+player_x = 'player x'
+player_o = 'player o'
 
 def initial_state():
     """
     Returns starting state of the board.
     """
-    return [[EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY]]
-
+    return [
+        [EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, EMPTY],
+        [EMPTY, EMPTY, EMPTY]
+            ]
 
 def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    raise NotImplementedError
+    x_counter = 0
+    o_counter = 0
 
+    for row in board:
+        for column in row:
+            if column == X:
+                x_counter = x_counter+1
+            if column == O:
+                 o_counter = o_counter+1
+
+    if x_counter and o_counter == 0:
+        return player_x
+    if ((x_counter+o_counter)%2 != 0):
+        return player_x
+    else:
+        return player_o
 
 def actions(board):
     """
