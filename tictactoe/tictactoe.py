@@ -125,6 +125,7 @@ def winner(board):
     actions_list = actions(board)
     print('possible actions : ',actions_list)
     winner_counter = 0
+    draw_counter = 0
     winner_position_list = []
     x_counter = 0
     o_counter = 0
@@ -133,20 +134,28 @@ def winner(board):
         for position in position_list:
             if position not in actions_list:
                 winner_counter = winner_counter+1
-            if winner_counter == 3:
-                # verify wich winning position worked
-                # verify wich player 
-                print('player winner')
-                print(position_list)
-                winner_position = position_list[0]
-                #print('winner position : ', winner_position)
-                if board[winner_position[0]][winner_position[1]] == X:
-                    print('player x won')
-                    return
-                if board[winner_position[0]][winner_position[1]] == O:
-                    print('player o won')
-                    return
+            if winner_counter == 3 :
 
+                player_position_1 = position_list[0]
+                player_position_2 = position_list[1]
+                player_position_3 = position_list[2]
+
+                if board[player_position_1[0]][player_position_1[1]] == board[player_position_2[0]][player_position_1[1]] == board[player_position_3[0]][player_position_1[1]] :
+                    
+                    # verify wich winning position worked
+                    # verify wich player 
+                    print('player winner')
+                    print(position_list)
+                    winner_position = position_list[0]
+                    #print('winner position : ', winner_position)
+                    if board[winner_position[0]][winner_position[1]] == X:
+                        print('player x won')
+                        return
+                    if board[winner_position[0]][winner_position[1]] == O:
+                        print('player o won')
+                        return
+                else:
+                    pass
     print('no winner')
             
         
