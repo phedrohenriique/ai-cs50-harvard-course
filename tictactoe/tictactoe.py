@@ -51,9 +51,28 @@ def player(board):
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
+    i = rows
+    j = columns
     """
-    raise NotImplementedError
+    i_counter = 0
+    j_counter = 0
 
+    possible_actions = []
+    if board:
+        for row in board:
+            for column in row:
+                if column == EMPTY:
+                    possible_actions.append((i_counter, j_counter))
+                if j_counter < 2:
+                    j_counter = j_counter + 1
+                else:
+                    j_counter = 0
+                
+            if i_counter < 2:
+                i_counter = i_counter+1
+            else:
+                i_counter = 0
+    return possible_actions
 
 def result(board, action):
     """
@@ -88,3 +107,7 @@ def minimax(board):
     Returns the optimal action for the current player on the board.
     """
     raise NotImplementedError
+
+if __name__ == "__main__":
+    print('Testing Functions')
+    print(actions(board_state))
