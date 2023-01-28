@@ -34,9 +34,13 @@ board_state_test_draw = [
 
 winning_positons_list = [
     [(0,0),(1,1),(2,2)], # diagonal
+    [(0,0),(1,0),(2,0)],
     [(0,1),(1,1),(2,1)], # vertical
+    [(0,2),(1,2),(2,2)],
     [(0,2),(1,1),(2,0)], # diagonal
+    [(0,0),(0,1),(0,2)],
     [(1,0),(1,1),(1,2)], # horizontal
+    [(2,0),(2,1),(2,2)],
 ]
 
 def initial_state():
@@ -50,9 +54,11 @@ def initial_state():
             ]
 
 def player(board):
+
     """
     Returns player who has the next turn on a board.
     """
+
     x_counter = 0
     o_counter = 0
 
@@ -118,45 +124,48 @@ def result(board, action):
 def winner(board):
     """
     Returns the winner of the game, if there is one.
-    It shll be comparede per cell instead of state,
+    It shall be compared per cell instead of state,
     it verifies if the possible winning actions are not in the actions
     array
     """
+    # can use winning_positions_list
+    board_winner = board.copy()
     actions_list = actions(board)
-    print('possible actions : ',actions_list)
-    winner_counter = 0
-    draw_counter = 0
-    winner_position_list = []
-    x_counter = 0
-    o_counter = 0
+    #print('possible actions : ',actions_list)
+
+    winner_x = 0
+    winner_o = 0
 
     for position_list in winning_positons_list:
+        #print('position list : ', position_list)
+        player_winning_list = []
         for position in position_list:
-            if position not in actions_list:
-                winner_counter = winner_counter+1
-            if winner_counter == 3 :
+            player_winning_list.append(board[position[0]][position[1]])
+        ## counter variable
+        #print('player winning list : ', player_winning_list)
+        for player in player_winning_list:
+            if player == X:
+                winner_x = winner_x + 1
+            if player == O:
+                winner_o = winner_o + 1
+        #print('x counter : ', winner_x)
+        #print('o counter : ', winner_o)
+        if winner_x == 3 :
+            print('player x won')
+            return
+        if winner_o == 3 :
+            print('player o won')
+            return
 
-                player_position_1 = position_list[0]
-                player_position_2 = position_list[1]
-                player_position_3 = position_list[2]
+        winner_x = 0
+        winner_o = 0
 
-                if board[player_position_1[0]][player_position_1[1]] == board[player_position_2[0]][player_position_1[1]] == board[player_position_3[0]][player_position_1[1]] :
-                    
-                    # verify wich winning position worked
-                    # verify wich player 
-                    print('player winner')
-                    print(position_list)
-                    winner_position = position_list[0]
-                    #print('winner position : ', winner_position)
-                    if board[winner_position[0]][winner_position[1]] == X:
-                        print('player x won')
-                        return
-                    if board[winner_position[0]][winner_position[1]] == O:
-                        print('player o won')
-                        return
-                else:
-                    pass
-    print('no winner')
+    if winner_o == 0 and winner_x ==0 :
+        print('no winner')  
+
+    #print('player_winning_list : ', player_winning_list)
+    # print('no winner')
+    # return None
             
         
     
@@ -181,6 +190,9 @@ def minimax(board):
     raise NotImplementedError
 
 if __name__ == "__main__":
-    print('Testing Functions')
+    #print('Testing Functions')
     #print(actions(board_state))
+    print('Script Test Running...')
+    winner(board_state_test_x)
+    winner(board_state_test_o)
     winner(board_state_test_draw)
