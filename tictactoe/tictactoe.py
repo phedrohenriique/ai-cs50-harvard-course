@@ -112,12 +112,17 @@ def result(board, action):
     """
 
     try:
-        if action in actions(board):
-            new_board = board.copy()
-            new_board.remove(action)
-            return new_board
+        if action not in actions(board):
+            return Exception
         else:
-            Exception
+            #print('action avaiable')
+            #print('player turn is : ',player(board))
+            new_board = board.copy()
+            #print('previous state : ', new_board)
+            new_board[action[0]].pop(action[1])
+            new_board[action[0]].insert(action[1], player(board))
+            #print('future state : ', new_board)
+            pass
     except:
         return Exception
 
@@ -128,71 +133,100 @@ def winner(board):
     it verifies if the possible winning actions are not in the actions
     array
     """
-    # can use winning_positions_list
-    board_winner = board.copy()
-    actions_list = actions(board)
-    #print('possible actions : ',actions_list)
 
     winner_x = 0
     winner_o = 0
 
     for position_list in winning_positons_list:
-        #print('position list : ', position_list)
         player_winning_list = []
         for position in position_list:
             player_winning_list.append(board[position[0]][position[1]])
-        ## counter variable
-        #print('player winning list : ', player_winning_list)
         for player in player_winning_list:
             if player == X:
                 winner_x = winner_x + 1
             if player == O:
                 winner_o = winner_o + 1
-        #print('x counter : ', winner_x)
-        #print('o counter : ', winner_o)
         if winner_x == 3 :
             print('player x won')
-            return
+            return X
         if winner_o == 3 :
             print('player o won')
-            return
+            return O
 
         winner_x = 0
         winner_o = 0
 
     if winner_o == 0 and winner_x ==0 :
-        print('no winner')  
-
-    #print('player_winning_list : ', player_winning_list)
-    # print('no winner')
-    # return None
-            
-        
+        print('no winner')
+        return None  
     
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    possible_actions = actions(board)
+    winner_player = winner(board)
 
-
+    if possible_actions == [] or winner_player != None:
+        return True
+    else:
+        return False
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
+    The board parameter is equal to utility(terminal(board))
     """
-    raise NotImplementedError
-
+    if board == True:
+        player = winner(board)
+        if player == X :
+            return 1
+        if player == O :
+            return -1
+        else: 
+            return 0
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
+    Uses recursivity to achieve its goal.
+    The minimax function should take a board as input, and return the optimal move for the player to move on that board.
+The move returned should be the optimal action (i, j) that is one of the allowable actions on the board. If multiple moves are equally optimal, any of those moves is acceptable.
+If the board is a terminal board, the minimax function should return None.
     """
-    raise NotImplementedError
+
+    # def minmax(depth, nodeIndex, maximizingPlayer, actions, h):
+
+
+    def max_value(board):
+        if terminal(board):
+            return utility(board)
+        value= -100000
+        for action in actions(board):
+            value = max(value,min_value(result(board, action)))
+            return value
+    
+    def min_value(board):
+        if terminal(board):
+            return utility(board)
+        value = 100000
+        for action in actions(board):
+            value = min(value,max_value(result(board, action)))
+            return value
+
+    optimal_value = -100000000
+    optimal_action = None
+    for action in actions(board):
+        value = min_value(result(board,action))
+        if value > optimal_value:
+            optimal_value = value
+            optimal_action = action
+    return optimal_action
 
 if __name__ == "__main__":
     #print('Testing Functions')
     #print(actions(board_state))
     print('Script Test Running...')
-    winner(board_state_test_x)
-    winner(board_state_test_o)
-    winner(board_state_test_draw)
+    #winner(board_state_test_x)
+    #winner(board_state_test_o)
+    #winner(board_state_test_draw)
+    result(board_state_test_x,(1,0))
