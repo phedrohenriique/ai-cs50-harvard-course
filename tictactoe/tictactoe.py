@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
 
 X = "X"
 O = "O"
@@ -82,25 +83,11 @@ def actions(board):
     i = rows
     j = columns
     """
-    i_counter = 0
-    j_counter = 0
-
     possible_actions = []
-    if board:
-        for row in board:
-            for column in row:
-                if column == EMPTY:
-                    possible_actions.append((i_counter, j_counter))
-                if j_counter < 2:
-                    j_counter = j_counter + 1
-                else:
-                    j_counter = 0
-                
-            if i_counter < 2:
-                i_counter = i_counter+1
-            else:
-                i_counter = 0
-
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == EMPTY:
+                possible_actions.append((i,j))
     return possible_actions
 
 def result(board, action):
@@ -115,14 +102,10 @@ def result(board, action):
         if action not in actions(board):
             return Exception
         else:
-            #print('action avaiable')
-            #print('player turn is : ',player(board))
-            new_board = board.copy()
-            #print('previous state : ', new_board)
+            new_board = copy.deepcopy(board)
             new_board[action[0]].pop(action[1])
             new_board[action[0]].insert(action[1], player(board))
-            #print('future state : ', new_board)
-            pass
+            return new_board
     except:
         return Exception
 
@@ -134,56 +117,41 @@ def winner(board):
     array
     """
 
-    winner_x = 0
-    winner_o = 0
-
-    for position_list in winning_positons_list:
-        player_winning_list = []
-        for position in position_list:
-            player_winning_list.append(board[position[0]][position[1]])
-        for player in player_winning_list:
-            if player == X:
-                winner_x = winner_x + 1
-            if player == O:
-                winner_o = winner_o + 1
-        if winner_x == 3 :
-            print('player x won')
+    for pos_list in winning_positons_list:
+        if all(board[pos[0]][pos[1]] == X for pos in pos_list):
             return X
-        if winner_o == 3 :
-            print('player o won')
+        if all(board[pos[0]][pos[1]] == O for pos in pos_list):
             return O
-
-        winner_x = 0
-        winner_o = 0
-
-    if winner_o == 0 and winner_x ==0 :
-        print('no winner')
-        return None  
+    return None
     
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    possible_actions = actions(board)
-    winner_player = winner(board)
 
-    if possible_actions == [] or winner_player != None:
+    winner_player = winner(board)
+    if winner_player == X:
+        return True
+    if winner_player == O:
+        return True
+    if actions(board) == []:
         return True
     else:
         return False
+
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     The board parameter is equal to utility(terminal(board))
     """
-    if board == True:
-        player = winner(board)
-        if player == X :
-            return 1
-        if player == O :
-            return -1
-        else: 
-            return 0
+
+    winner_player = winner(board)
+    if winner_player == X :
+        return 1
+    if winner_player == O :
+        return -1
+    else:
+        return 0
 
 def minimax(board):
     """
@@ -194,39 +162,48 @@ The move returned should be the optimal action (i, j) that is one of the allowab
 If the board is a terminal board, the minimax function should return None.
     """
 
-    # def minmax(depth, nodeIndex, maximizingPlayer, actions, h):
-
+    def min_value(board):
+        if terminal(board):
+            return utility(board)
+        value = 1000000
+        for action in actions(board):
+            value = min(value, max_value(result(board, action)))
+            if value == -1:
+                break
+        return value
 
     def max_value(board):
         if terminal(board):
             return utility(board)
-        value= -100000
+        value = -1000000
         for action in actions(board):
-            value = max(value,min_value(result(board, action)))
-            return value
-    
-    def min_value(board):
-        if terminal(board):
-            return utility(board)
-        value = 100000
-        for action in actions(board):
-            value = min(value,max_value(result(board, action)))
-            return value
+            value = max(value, min_value(result(board, action)))
+            if value == 1:
+                break
+        return value
+        
 
-    optimal_value = -100000000
-    optimal_action = None
-    for action in actions(board):
-        value = min_value(result(board,action))
-        if value > optimal_value:
-            optimal_value = value
-            optimal_action = action
-    return optimal_action
+    if board == terminal(board):
+        return None
+
+    best_move = None
+
+    if player(board) == X:
+        best_value = -1
+        for action in actions(board):
+            value = min_value(result(board, action))
+            if value > best_value:
+                best_value = value
+                best_move = action
+    else:
+        best_value = 1
+        for action in actions(board):
+            value = max_value(result(board, action))
+            if value < best_value:
+                best_value = value
+                best_move = action
+
+    return best_move
 
 if __name__ == "__main__":
-    #print('Testing Functions')
-    #print(actions(board_state))
     print('Script Test Running...')
-    #winner(board_state_test_x)
-    #winner(board_state_test_o)
-    #winner(board_state_test_draw)
-    result(board_state_test_x,(1,0))
