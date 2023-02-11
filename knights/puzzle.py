@@ -31,10 +31,9 @@ knowledge1 = And(
 # B says "We are of different kinds."
 knowledge2 = And(
     Implication(AKnave, BKnight),
-    Or(BKnight, AKnave),
-    And(Not(AKnight), Not(BKnight)),
-    And(Not(AKnave), Not(BKnave))
-
+    Not(AKnight),
+    Implication(BKnave, AKnave),
+    AKnave
 )
 
 # Puzzle 3
@@ -43,9 +42,12 @@ knowledge2 = And(
 # B says "C is a knave."
 # C says "A is a knight."
 knowledge3 = And(
-    # Or(AKnave, AKnight),
-    # Implication(BKnave, CKnight),
-    # Implication(BKnight, CKnave)
+    Implication(BKnave, AKnight),
+    Implication(AKnight, CKnight),
+    Implication(CKnight, BKnave),
+    Implication(BKnave, CKnight),
+    And(CKnight, AKnight)
+
 )
 
 
